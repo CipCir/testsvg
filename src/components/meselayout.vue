@@ -3,14 +3,23 @@
     <svg width="500" height="500">
       <circle cx="150" cy="150" r="40" class="masa"></circle>
       <!-- sateliti -->
-      <circle 
-        v-for="n in Locuri" :key="n"
+      <circle
+        v-for="n in Locuri"
+        :key="n"
         :cx="calcSatelite(150,150,40,n).x"
         :cy="calcSatelite(150,150,40,n).y"
         r="10"
-        >
+      ></circle>
 
-      </circle>
+      <circle cx="300" cy="150" r="40" class="masa"></circle>
+      <!-- sateliti -->
+      <circle
+        v-for="n in Locuri"
+        :key="n"
+        :cx="calcSatelite(300,150,50,n).x"
+        :cy="calcSatelite(300,150,50,n).y"
+        r="10"
+      ></circle>
     </svg>
   </div>
 </template>
@@ -24,18 +33,17 @@ export default {
   data() {
     return {
       Mese: 2,
-      Locuri: 10
+      Locuri: 6
     };
   },
   methods: {
-    calcSatelite(ParentX, ParentY, ParentR,LocNr) {
-      var MasaRaza = 10;
-      var angle,X,Y;
+    calcSatelite(ParentX, ParentY, ParentR, LocNr) {
+      var angle, X, Y;
 
       angle = (LocNr / (this.Locuri / 2)) * Math.PI;
-      X = (ParentR * Math.cos(angle)) + (MasaRaza/2);
-      Y = (ParentR * Math.sin(angle)) + (MasaRaza/2);
-      return {'x': X, 'y': Y}
+      X = ParentR * Math.cos(angle);
+      Y = ParentR * Math.sin(angle);
+      return { x: X + ParentX, y: Y + ParentY };
     }
   }
 };
