@@ -1,52 +1,93 @@
 <template>
   <div>
     <svg width="500" height="500">
-      <circle cx="150" cy="150" r="40" class="masa"></circle>
-      <!-- sateliti -->
-      <circle
-        v-for="n in Locuri"
-        :key="n"
-        :cx="calcSatelite(150,150,40,n).x"
-        :cy="calcSatelite(150,150,40,n).y"
-        r="10"
-      ></circle>
+    <g
+      v-for="(masa,index) in MeseData"
+      :key="index">
 
-      <circle cx="300" cy="150" r="40" class="masa"></circle>
+      <circle :id="masa.id" :cx="masa.x" :cy="masa.y" :r="DeffMasa.r" class="masa"></circle>
       <!-- sateliti -->
-      <circle
-        v-for="n in Locuri"
-        :key="n"
-        :cx="calcSatelite(300,150,50,n).x"
-        :cy="calcSatelite(300,150,50,n).y"
-        r="10"
-      ></circle>
+      <g
+        v-for="(loc,indexy) in masa.locuri"
+        :key="indexy">
+        <circle
+          :id="loc.id"
+          :cx="calcSatelite(masa.x,masa.y,indexy).x"
+          :cy="calcSatelite(masa.x,masa.y,indexy).y"
+          :r="DeffLoc.r"
+          @click="LocClick(loc)"
+        ></circle>
+        <text
+        v-if="loc.inv!=''"
+        :x="calcText(masa.x,masa.y,indexy).x"
+        :y="calcText(masa.x,masa.y,indexy).y" fill="red">{{loc.inv}}
+        </text>
+      </g>
+    </g>
     </svg>
   </div>
 </template>
 
 <script>
 export default {
-  name: "MeseLayout",
+  name: 'MeseLayout',
   props: {
     msg: String
   },
-  data() {
+  data () {
     return {
       Mese: 2,
-      Locuri: 6
-    };
+      Locuri: 6,
+      MesePoz: [{ x: 150, y: 150 }, { x: 300, y: 180 }],
+      DeffMasa: { r: 40 },
+      DeffLoc: { r: 10, dist: 20 },
+      MeseData: []
+    }
+  },
+  created () {
+    var vueOBJ = this
+    for (var i = 1; i <= this.Mese; i++) {
+      const data = {
+        id: 'M' + i,
+        x: vueOBJ.MesePoz[i - 1].x,
+        y: vueOBJ.MesePoz[i - 1].y,
+        locuri: []
+      }
+      for (var j = 1; j <= vueOBJ.Locuri; j++) {
+        const locObj = {
+          id: 'M' + i + 'L' + j,
+          inv: ''
+        }
+        data.locuri.push(locObj)
+      }
+      vueOBJ.MeseData.push(data)
+    }
   },
   methods: {
-    calcSatelite(ParentX, ParentY, ParentR, LocNr) {
-      var angle, X, Y;
+    calcSatelite (ParentX, ParentY, LocNr) {
+      var angle, X, Y
+      var distFromParent = this.DeffLoc.dist
 
-      angle = (LocNr / (this.Locuri / 2)) * Math.PI;
-      X = ParentR * Math.cos(angle);
-      Y = ParentR * Math.sin(angle);
-      return { x: X + ParentX, y: Y + ParentY };
+      angle = (LocNr / (this.Locuri / 2)) * Math.PI
+      X = (this.DeffMasa.r + distFromParent) * Math.cos(angle)
+      Y = (this.DeffMasa.r + distFromParent) * Math.sin(angle)
+      return { x: X + ParentX, y: Y + ParentY }
+    },
+    calcText (ParentX, ParentY, LocNr) {
+      var angle, X, Y
+      var distFromParent = this.DeffLoc.dist
+
+      angle = (LocNr / (this.Locuri / 2)) * Math.PI
+      X = (this.DeffMasa.r + distFromParent) * Math.cos(angle)
+      Y = (this.DeffMasa.r + distFromParent) * Math.sin(angle)
+      return { x: X + ParentX, y: Y + ParentY }
+    },
+    LocClick (loc) {
+      console.log(loc)
+      loc.inv = 'axxc nlk'
     }
   }
-};
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
